@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Checkout Details</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop:cart_detail' %}">Cart</a></li>
+            <li>Checkout</li>
+        </ul>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0;">
+    <div style="display: flex; gap: var(--space-xl); flex-wrap: wrap;">
+        
+        <!-- Left: Shipping & Billing Form -->
+        <div style="flex: 2 1 500px;">
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light);">
+                <h3 style="font-size: 1.2rem; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs); margin-bottom: var(--space-md); letter-spacing: 0.5px;">Shipping & Contact Information</h3>
+                
+                <form action="{% url 'shop:checkout' %}" method="post" id="checkout-form">
+                    {% csrf_token %}
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); flex-wrap: wrap;">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="checkout-name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="checkout-name" required value="{% if user.is_authenticated %}{{ user.first_name }} {{ user.last_name }}{% endif %}" class="form-control" placeholder="Jane Doe">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkout-email" class="form-label">Email Address</label>
+                            <input type="email" name="email" id="checkout-email" required value="{% if user.is_authenticated %}{{ user.email }}{% endif %}" class="form-control" placeholder="jane@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="checkout-phone" class="form-label">WhatsApp Number (with country code)</label>
+                            <input type="tel" name="phone" id="checkout-phone" required class="form-control" placeholder="+2348031234567" help-text="We will contact you on this number for payment confirmation.">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="checkout-address" class="form-label">Full Shipping Address</label>
+                        <textarea name="address" id="checkout-address" rows="4" required class="form-control" placeholder="Apartment, Street Name, City, State, ZIP, Country"></textarea>
+                    </div>
+
+                    <h3 style="font-size: 1.2rem; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs); margin-top: var(--space-lg); margin-bottom: var(--space-md); letter-spacing: 0.5px;">Payment Method</h3>
+                    
+                    <!-- Payment Methods selection options -->
+                    <div class="form-group">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                            <label style="display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-sm); border: 1px solid var(--color-gold); background-color: var(--color-offwhite); border-radius: var(--radius-sm); cursor: pointer;">
+                                <input type="radio" name="payment_method" value="whatsapp" checked style="margin-top: 4px;" onchange="togglePaymentDesc(this.value)">
+                                <div>
+                                    <strong style="color: var(--color-primary); font-size: 0.95rem;">WhatsApp Native Order Confirmation (Recommended)</strong>
+                                    <p style="font-size: 0.85rem; color: var(--color-gray-dark); margin: 0; margin-top: 2px;">
+                                        Submit your shipping info and we will redirect you to WhatsApp. Send the order summary text to initiate instant support from our sales consultants.
+                                    </p>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-sm); border: 1px solid var(--color-gray-light); border-radius: var(--radius-sm); cursor: pointer;">
+                                <input type="radio" name="payment_method" value="card_fallback" style="margin-top: 4px;" onchange="togglePaymentDesc(this.value)">
+                                <div>
+                                    <strong style="color: var(--color-primary); font-size: 0.95rem;">Secure Credit Card Fallback</strong>
+                                    <p style="font-size: 0.85rem; color: var(--color-gray-dark); margin: 0; margin-top: 2px;">
+                                        Pay instantly on site. Simulates secure credit card authorization rails.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Fallback Card Form fields -->
+                    <div id="card-fields" style="display: none; border: 1px solid var(--color-gray-light); border-radius: var(--radius-sm); padding: var(--space-md); background-color: var(--color-offwhite); margin-bottom: var(--space-md);">
+                        <h4 style="font-size: 0.95rem; margin-bottom: var(--space-sm); letter-spacing: 0.5px;">SECURE CARD DETAILS</h4>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.8rem;">Card Number</label>
+                            <input type="text" placeholder="4111 2222 3333 4444" class="form-control" style="background-color: var(--color-secondary);">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" style="font-size: 0.8rem;">Expiry Date</label>
+                                <input type="text" placeholder="MM/YY" class="form-control" style="background-color: var(--color-secondary);">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" style="font-size: 0.8rem;">CVV Code</label>
+                                <input type="text" placeholder="123" class="form-control" style="background-color: var(--color-secondary);">
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.8rem; color: var(--color-gray-medium); margin-bottom: var(--space-md);">
+                        By submitting this checkout form, you agree to our <a href="{% url 'terms' %}" target="_blank" style="text-decoration: underline;">Terms & Conditions</a> and <a href="{% url 'privacy' %}" target="_blank" style="text-decoration: underline;">Privacy Disclosures</a>.
+                    </p>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="checkout-submit-btn">Place Order via WhatsApp</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Cart Items Summary -->
+        <div style="flex: 1 1 300px; max-width: 400px;">
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); height: fit-content;">
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs); margin-bottom: var(--space-md); letter-spacing: 0.5px;">Order Summary</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-md); max-height: 250px; overflow-y: auto;">
+                    {% for item in cart %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+                            <div style="display: flex; gap: var(--space-xs); align-items: center;">
+                                <div style="width: 40px; height: 50px; border-radius: var(--radius-sm); overflow: hidden; background-color: var(--color-offwhite);">
+                                    <img src="{{ item.product.get_main_image_url }}" alt="{{ item.product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div>
+                                    <strong style="text-transform: capitalize;">{{ item.product.name }}</strong>
+                                    <span style="display: block; font-size: 0.75rem; color: var(--color-gray-medium);">Qty: {{ item.quantity }} | {{ item.color }}</span>
+                                </div>
+                            </div>
+                            <span style="font-weight: bold;">${{ item.total_price }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div style="border-top: 1px solid var(--color-gray-light); padding-top: var(--space-sm); display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; color: var(--color-primary); margin-top: var(--space-sm);">
+                    <span>Total Amount</span>
+                    <span>${{ cart.get_total_price }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+    function togglePaymentDesc(val) {
+        const cardFields = document.getElementById('card-fields');
+        const submitBtn = document.getElementById('checkout-submit-btn');
+        
+        if (val === 'whatsapp') {
+            cardFields.style.display = 'none';
+            submitBtn.textContent = 'Place Order via WhatsApp';
+            submitBtn.className = 'btn btn-primary btn-block';
+        } else {
+            cardFields.style.display = 'block';
+            submitBtn.textContent = 'Pay Securely Now';
+            submitBtn.className = 'btn btn-gold btn-block';
+        }
+        
+        // Highlight active radio container border
+        const labels = document.getElementsByTagName('label');
+        for (let label of labels) {
+            if (label.innerHTML.includes('type="radio"')) {
+                label.style.borderColor = 'var(--color-gray-light)';
+                label.style.backgroundColor = 'transparent';
+            }
+        }
+        
+        const checkedRadio = document.querySelector('input[name="payment_method"]:checked');
+        if (checkedRadio) {
+            const container = checkedRadio.parentElement.parentElement;
+            container.style.borderColor = 'var(--color-gold)';
+            container.style.backgroundColor = 'var(--color-offwhite)';
+        }
+    }
+
+    const checkoutForm = document.getElementById('checkout-form');
+    checkoutForm.addEventListener('submit', function(e) {
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        
+        // If WhatsApp, submit form normally
+        if (paymentMethod === 'whatsapp') {
+            return;
+        }
+        
+        const paystackPublicKey = "{{ paystack_public_key|escapejs }}";
+        
+        // If Paystack key is not configured, fallback to mock card processing
+        if (!paystackPublicKey) {
+            return;
+        }
+        
+        // Prevent default submission to launch Paystack pop-up
+        e.preventDefault();
+        
+        const email = document.getElementById('checkout-email').value;
+        const name = document.getElementById('checkout-name').value;
+        const phone = document.getElementById('checkout-phone').value;
+        const totalAmountKobo = {{ cart_total_kobo }};
+        
+        let handler = PaystackPop.setup({
+            key: paystackPublicKey,
+            email: email,
+            amount: totalAmountKobo,
+            currency: 'NGN',
+            ref: 'TXN_' + Math.floor((Math.random() * 1000000000) + 1),
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "Customer Name",
+                        variable_name: "customer_name",
+                        value: name
+                    },
+                    {
+                        display_name: "Customer Phone",
+                        variable_name: "customer_phone",
+                        value: phone
+                    }
+                ]
+            },
+            callback: function(response) {
+                // Add hidden reference field and submit form to backend
+                const refInput = document.createElement('input');
+                refInput.type = 'hidden';
+                refInput.name = 'paystack_reference';
+                refInput.value = response.reference;
+                checkoutForm.appendChild(refInput);
+                checkoutForm.submit();
+            },
+            onClose: function() {
+                alert('Payment window closed. Please try again to complete your order.');
+            }
+        });
+        
+        handler.openIframe();
+    });
+</script>
+{% endblock %}

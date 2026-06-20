@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQs - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Frequently Asked Questions</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>FAQ</li>
+        </ul>
+    </div>
+</section>
+
+<section class="faq-section" style="padding: var(--space-xl) 0;">
+    <div class="container" style="max-width: 800px;">
+        <h2 style="font-size: 1.5rem; text-align: center; margin-bottom: var(--space-xl); letter-spacing: 1px;">SALON SERVICES & ORDERING HELP</h2>
+        
+        <div class="faq-list">
+            <details class="faq-item" open>
+                <summary class="faq-question">How does checking out with WhatsApp work?</summary>
+                <div class="faq-answer">
+                    <p style="margin: 0;">
+                        When you select "WhatsApp Payment" during checkout and click complete, you will be redirected to WhatsApp with a pre-filled message detailing your cart items and shipping details. Once you send this message to our account, our customer advisor will verify stock and send you payment rails (bank transfer details or localized card payment links).
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">What are the fallback payment options?</summary>
+                <div class="faq-answer">
+                    <p style="margin: 0;">
+                        If you prefer not to use WhatsApp, you can select "Credit Card Fallback" during checkout. This processes your order directly on-site via our secure payment gateway simulation. We also accept direct bank transfers upon request through our support email.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Where do you source your silk and cotton?</summary>
+                <div class="faq-answer">
+                    <p style="margin: 0;">
+                        Our heavy mulberry silk is sourced from sustainable farms in China’s Zhejiang province, renowned for centuries of silk cultivation. Our premium cotton is long-staple Egyptian cotton harvested along the Nile Delta, ensuring fibers that are exceptionally soft and durable.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Do you ship internationally?</summary>
+                <div class="faq-answer">
+                    <p style="margin: 0;">
+                        Yes, we ship globally via DHL Express. Shipping rates are calculated based on your address. Standard international deliveries arrive within 3-7 business days, complete with end-to-end tracking.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">How do I wash my Mulberry Silk veil?</summary>
+                <div class="faq-answer">
+                    <p style="margin: 0;">
+                        We recommend hand washing in cold water using a pH-neutral silk detergent. Lay flat to dry out of direct sunlight. Do not wring or twist. Iron on a low silk setting with steam, preferably placing a protective cloth between the iron and the veil.
+                    </p>
+                </div>
+            </details>
+        </div>
+    </div>
+</section>
+{% endblock %}

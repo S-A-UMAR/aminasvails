@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Contact Our Salon</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Contact</li>
+        </ul>
+    </div>
+</section>
+
+<section class="contact-section" style="padding: var(--space-xl) 0;">
+    <div class="container" style="max-width: 900px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-xl);">
+            <!-- Contact Details -->
+            <div>
+                <h2 style="font-size: 1.5rem; margin-bottom: var(--space-md); letter-spacing: 1px;">GET IN TOUCH</h2>
+                <p style="color: var(--color-gray-dark); margin-bottom: var(--space-lg);">
+                    Whether you require custom dimensions, styling advice, or assistance with our WhatsApp payments system, our consultants are ready to assist you.
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--space-md); font-size: 0.95rem;">
+                    <div style="display: flex; gap: var(--space-sm); align-items: flex-start;">
+                        <i data-feather="map-pin" style="color: var(--color-gold); flex-shrink: 0; width: 20px; height: 20px;"></i>
+                        <div>
+                            <p style="font-weight: bold; margin-bottom: 2px;">SALON ADDRESS</p>
+                            <p style="color: var(--color-gray-dark); margin: 0;">12 Luxury Lane, Victoria Island, Lagos, Nigeria</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: var(--space-sm); align-items: flex-start;">
+                        <i data-feather="mail" style="color: var(--color-gold); flex-shrink: 0; width: 20px; height: 20px;"></i>
+                        <div>
+                            <p style="font-weight: bold; margin-bottom: 2px;">EMAIL SUPPORT</p>
+                            <p style="color: var(--color-gray-dark); margin: 0;"><a href="mailto:support@aminasvails.com" style="color: var(--color-gold);">support@aminasvails.com</a></p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: var(--space-sm); align-items: flex-start;">
+                        <i data-feather="message-circle" style="color: var(--color-gold); flex-shrink: 0; width: 20px; height: 20px;"></i>
+                        <div>
+                            <p style="font-weight: bold; margin-bottom: 2px;">WHATSAPP CONSULTANT</p>
+                            <p style="color: var(--color-gray-dark); margin: 0;"><a href="https://wa.me/2348000000000" style="color: var(--color-gold);" target="_blank" rel="noopener">+234 (0) 80 000 0000</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light);">
+                <h3 style="font-size: 1.2rem; margin-bottom: var(--space-md); letter-spacing: 1px;">SEND AN INQUIRY</h3>
+                <form action="{% url 'contact' %}" method="post" id="contact-form">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div style="color: var(--color-error); font-size: 0.8rem; margin-top: var(--space-xxs);">
+                                    {% for error in field.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-sm);">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

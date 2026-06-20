@@ -1,0 +1,468 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Analytics Dashboard | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --gold: #d4af37;
+    --gold-light: rgba(212,175,55,.2);
+    --gold-bright: #f0d060;
+    --dark: #111;
+    --card: #1a1a1a;
+    --border: rgba(212,175,55,.15);
+    --text: #e8e8e8;
+    --muted: #888;
+    --green:  #27ae60;
+    --orange: #f39c12;
+    --red:    #e74c3c;
+    --blue:   #3498db;
+    --purple: #9b59b6;
+  }
+  #content-main { padding: 0 !important; }
+
+  /* ── Wrapper ────────────── */
+  .dw {
+    background: var(--dark);
+    min-height: 100vh;
+    padding: 28px 32px;
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  /* ── Hero ───────────────── */
+  .dw-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+  .dw-hero h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .dw-hero p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(212,175,55,.08);
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background .2s;
+  }
+  .back-btn:hover { background: rgba(212,175,55,.2); color: var(--gold); }
+
+  /* ── KPI Grid ───────────── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .kpi:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(212,175,55,.12); }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--kpi-color, var(--gold));
+  }
+  .kpi-icon { font-size: 26px; display: block; margin-bottom: 10px; }
+  .kpi-val  { font-size: 1.9rem; font-weight: 800; color: var(--gold); line-height: 1.1; }
+  .kpi-lbl  { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+
+  /* ── Chart grid ─────────── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 22px;
+    margin-bottom: 28px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .card-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title a { font-size: 11px; color: var(--gold); text-decoration: none; opacity: .65; }
+  .card-title a:hover { opacity: 1; }
+  canvas { max-height: 240px; }
+
+  /* ── Data table ─────────── */
+  .dt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .dt th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .dt td {
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .dt tr:last-child td { border-bottom: none; }
+  .dt tr:hover td { background: rgba(212,175,55,.04); }
+  .dt a { color: var(--gold); text-decoration: none; }
+  .dt a:hover { text-decoration: underline; }
+
+  /* ── Badges ─────────────── */
+  .badge {
+    display: inline-block;
+    padding: 2px 11px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .b-pending    { background: var(--orange); }
+  .b-processing { background: var(--blue); }
+  .b-shipped    { background: var(--purple); }
+  .b-completed  { background: var(--green); }
+  .b-cancelled  { background: var(--red); }
+  .b-low        { background: var(--red); }
+
+  /* ── Star bars ──────────── */
+  .star-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .star-lbl { color: var(--gold); font-size: 13px; min-width: 22px; }
+  .bar-bg { flex: 1; background: rgba(255,255,255,.07); border-radius: 4px; height: 8px; }
+  .bar-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); transition: width .6s ease; }
+  .bar-cnt { font-size: 11px; color: var(--muted); min-width: 24px; text-align: right; }
+
+  /* ── Bottom grid ────────── */
+  .bot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 22px;
+  }
+
+  @media (max-width: 980px) {
+    .chart-grid, .bot-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 540px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .dw { padding: 16px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dw">
+
+  <!-- Hero header -->
+  <div class="dw-hero">
+    <div>
+      <h1>📊 Analytics Dashboard</h1>
+      <p>Live store intelligence — Amina's Vails Command Centre</p>
+    </div>
+    <a class="back-btn" href="../">← Back to Admin</a>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi" style="--kpi-color:#d4af37">
+      <span class="kpi-icon">💰</span>
+      <div class="kpi-val">₦{{ total_revenue|floatformat:0 }}</div>
+      <div class="kpi-lbl">Total Revenue</div>
+    </div>
+    <div class="kpi" style="--kpi-color:#3498db">
+      <span class="kpi-icon">📦</span>
+      <div class="kpi-val">{{ total_orders }}</div>
+      <div class="kpi-lbl">All-Time Orders</div>
+    </div>
+    <div class="kpi" style="--kpi-color:#f39c12">
+      <span class="kpi-icon">⏳</span>
+      <div class="kpi-val">{{ pending_orders }}</div>
+      <div class="kpi-lbl">Pending Orders</div>
+    </div>
+    <div class="kpi" style="--kpi-color:#27ae60">
+      <span class="kpi-icon">🛍️</span>
+      <div class="kpi-val">{{ todays_orders }}</div>
+      <div class="kpi-lbl">Today's Orders</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-title">Revenue — Last 7 Days</div>
+      <canvas id="revenueChart"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Orders by Status</div>
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-title">Monthly Orders — Last 6 Months</div>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Top 5 Products by Revenue</div>
+      <canvas id="topChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Bottom section -->
+  <div class="bot-grid">
+
+    <!-- Recent orders table -->
+    <div class="card">
+      <div class="card-title">
+        Recent Orders
+        <a href="../shop/order/">View All →</a>
+      </div>
+      <table class="dt">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in recent_orders %}
+          <tr>
+            <td><a href="../shop/order/{{ o.id }}/change/"><strong>#{{ o.id }}</strong></a></td>
+            <td>{{ o.customer_name }}</td>
+            <td><strong>₦{{ o.total_amount|floatformat:0 }}</strong></td>
+            <td>
+              {% if o.payment_method == 'whatsapp' %}
+                <span style="color:#25d366;font-weight:700">● WA</span>
+              {% else %}
+                <span style="color:#3498db;font-weight:700">● Card</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge b-{{ o.status|lower }}">{{ o.status }}</span>
+            </td>
+            <td style="color:var(--muted)">{{ o.created_at|date:"d M, H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--muted);padding:28px">No orders yet</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right sidebar -->
+    <div style="display:flex;flex-direction:column;gap:22px">
+
+      <!-- Low Stock Alert -->
+      <div class="card">
+        <div class="card-title">
+          ⚠️ Low Stock Alert
+          <a href="../shop/product/">Manage →</a>
+        </div>
+        {% if low_stock %}
+          <table class="dt">
+            <thead><tr><th>Product</th><th>Stock</th></tr></thead>
+            <tbody>
+              {% for p in low_stock %}
+              <tr>
+                <td><a href="../shop/product/{{ p.id }}/change/">{{ p.name|truncatechars:26 }}</a></td>
+                <td>
+                  {% if p.stock == 0 %}
+                    <span class="badge b-low">Out of Stock</span>
+                  {% else %}
+                    <span class="badge b-low">{{ p.stock }} left</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p style="color:var(--muted);font-size:12px;text-align:center;padding:18px 0">✅ All products well stocked</p>
+        {% endif %}
+      </div>
+
+      <!-- Review Breakdown -->
+      <div class="card">
+        <div class="card-title">
+          ⭐ Review Ratings
+          <a href="../shop/review/">View All →</a>
+        </div>
+        {% if total_reviews %}
+          {% for row in review_data %}
+          <div class="star-row">
+            <span class="star-lbl">{{ row.star }}★</span>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width:{{ row.pct }}%"></div>
+            </div>
+            <span class="bar-cnt">{{ row.count }}</span>
+          </div>
+          {% endfor %}
+          <p style="color:var(--muted);font-size:11px;text-align:right;margin-top:10px">{{ total_reviews }} total reviews</p>
+        {% else %}
+          <p style="color:var(--muted);font-size:12px;text-align:center;padding:18px 0">No reviews yet</p>
+        {% endif %}
+      </div>
+
+    </div><!-- /right sidebar -->
+  </div><!-- /bot-grid -->
+
+</div><!-- /dw -->
+
+<!-- Chart.js scripts -->
+<script>
+(function() {
+  const GOLD   = '#d4af37';
+  const GOLDF  = 'rgba(212,175,55,.18)';
+  const TEXT   = '#ccc';
+  const GRID   = 'rgba(255,255,255,.06)';
+
+  Chart.defaults.color = TEXT;
+  Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+  Chart.defaults.font.size = 12;
+
+  // Revenue – 7-day line
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+      labels: {{ daily_labels|safe }},
+      datasets: [{
+        label: 'Revenue (₦)',
+        data: {{ daily_revenue|safe }},
+        borderColor: GOLD,
+        backgroundColor: GOLDF,
+        borderWidth: 2.5,
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: GOLD,
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: GRID } },
+        y: { grid: { color: GRID }, ticks: { callback: v => '₦' + v.toLocaleString() } }
+      }
+    }
+  });
+
+  // Status – doughnut
+  new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ statuses|safe }},
+      datasets: [{
+        data: {{ status_counts|safe }},
+        backgroundColor: ['#f39c12','#3498db','#9b59b6','#27ae60','#e74c3c'],
+        borderColor: '#1a1a1a',
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '68%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 18, usePointStyle: true, pointStyleWidth: 10 } }
+      }
+    }
+  });
+
+  // Monthly orders – bar
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ monthly_labels|safe }},
+      datasets: [{
+        label: 'Orders',
+        data: {{ monthly_counts|safe }},
+        backgroundColor: GOLDF,
+        borderColor: GOLD,
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: GRID } },
+        y: { grid: { color: GRID }, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+
+  // Top products – horizontal bar
+  new Chart(document.getElementById('topChart'), {
+    type: 'bar',
+    data: {
+      labels: [{% for p in top_products %}"{{ p.product__name|truncatechars:22|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+      datasets: [{
+        label: 'Revenue (₦)',
+        data: [{% for p in top_products %}{{ p.total|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        backgroundColor: ['#d4af37','#c9a227','#b8921f','#a07a18','#8a6510'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: GRID }, ticks: { callback: v => '₦' + v.toLocaleString() } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+})();
+</script>
+{% endblock %}

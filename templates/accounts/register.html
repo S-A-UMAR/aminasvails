@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Account Registration</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Register</li>
+        </ul>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0; max-width: 450px;">
+    <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light);">
+        <h2 style="font-size: 1.3rem; margin-bottom: var(--space-md); letter-spacing: 1px; text-align: center;">CREATE AN ACCOUNT</h2>
+        
+        <form action="{% url 'accounts:register' %}" method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <input type="{% if 'password' in field.name %}password{% else %}text{% endif %}" name="{{ field.name }}" id="{{ field.id_for_label }}" required class="form-control" placeholder="Enter {{ field.label|lower }}">
+                    {% if field.help_text %}
+                        <div style="font-size: 0.75rem; color: var(--color-gray-medium); margin-top: 4px;">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div style="color: var(--color-error); font-size: 0.8rem; margin-top: var(--space-xxs);">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-sm);">Create Account</button>
+        </form>
+        
+        <div style="margin-top: var(--space-md); text-align: center; font-size: 0.9rem; color: var(--color-gray-dark);">
+            <p>Already have an account? <a href="{% url 'accounts:login' %}" style="color: var(--color-gold); font-weight: bold;">Log in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

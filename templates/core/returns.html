@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Returns & Refunds - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Returns & Refunds</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Returns</li>
+        </ul>
+    </div>
+</section>
+
+<section style="padding: var(--space-xl) 0;">
+    <div class="container" style="max-width: 800px; color: var(--color-gray-dark); line-height: 1.8;">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: var(--space-md); letter-spacing: 1px;">OUR RETURN POLICY</h2>
+        <p style="margin-bottom: var(--space-sm);">
+            Due to the delicate nature of Mulberry Silk, premium Chiffon, and Cotton fabrics, and for hygienic reasons, we enforce a strict quality return standard. We want you to be completely satisfied with your purchase from Amina’s Vails.
+        </p>
+        <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-xs); letter-spacing: 0.5px;">Return Timeline</h3>
+        <p style="margin-bottom: var(--space-sm);">
+            We accept return requests within <strong>14 days</strong> of receiving your delivery. The item must be completely unworn, unwashed, in its original packaging, and with all luxury tags intact.
+        </p>
+        <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-xs); letter-spacing: 0.5px;">How to Initiate a Return</h3>
+        <p style="margin-bottom: var(--space-sm);">
+            To start your return, please contact us at <a href="mailto:returns@aminasvails.com" style="color: var(--color-gold);">returns@aminasvails.com</a> with your order number. Once our quality assurance team inspects the returned item, a refund will be processed back to your original payment rail, or issued as a store credit, according to your preference.
+        </p>
+    </div>
+</section>
+{% endblock %}

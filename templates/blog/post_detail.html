@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <ul class="breadcrumbs" style="margin-bottom: var(--space-xs);">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'blog:post_list' %}">Journal</a></li>
+            <li>{{ post.title }}</li>
+        </ul>
+        <h1 class="page-hero-title" style="font-size: 2rem; line-height: 1.2;">{{ post.title }}</h1>
+        <p style="font-size: 0.85rem; color: var(--color-gray-medium); text-transform: uppercase; letter-spacing: 1px; margin: 0; margin-top: 5px;">
+            Published on {{ post.created_at|date:"F d, Y" }} | By {{ post.author.username }}
+        </p>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0; max-width: 800px;">
+    <!-- Featured Image -->
+    <div style="aspect-ratio: 16/9; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); margin-bottom: var(--space-xl); background-color: var(--color-offwhite);">
+        <img src="{{ post.get_image_url }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <!-- Article Body -->
+    <article style="color: var(--color-charcoal); line-height: 1.8; font-size: 1.1rem; font-weight: 300;">
+        {{ post.body|linebreaks }}
+    </article>
+    
+    <!-- Share & Navigation bottom row -->
+    <div style="border-top: 1px solid var(--color-gray-light); margin-top: var(--space-xl); padding-top: var(--space-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm);">
+        <a href="{% url 'blog:post_list' %}" class="btn btn-secondary btn-sm"><i data-feather="arrow-left" style="width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;"></i> Journal Index</a>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+            <span style="font-size: 0.85rem; color: var(--color-gray-medium); text-transform: uppercase; letter-spacing: 1px;">Share:</span>
+            <div style="display: flex; gap: 8px;">
+                <a href="https://pinterest.com" target="_blank" rel="noopener" style="color: var(--color-gray-medium);"><i data-feather="bookmark" style="width: 16px; height: 16px;"></i></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener" style="color: var(--color-gray-medium);"><i data-feather="instagram" style="width: 16px; height: 16px;"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | Amina's Vails Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <span style="font-size:22px">✦</span>
+    <span style="font-family:'Josefin Sans',sans-serif;font-size:18px;font-weight:700;
+                 background:linear-gradient(90deg,#d4af37,#f0d060);
+                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                 letter-spacing:2px">AMINA'S VAILS</span>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div style="background:rgba(212,175,55,.08);border-bottom:1px solid rgba(212,175,55,.15);padding:0 24px">
+  <nav style="display:flex;gap:4px;padding:4px 0">
+    <a href="."
+       style="color:#d4af37;text-decoration:none;font-size:12px;font-weight:600;
+              padding:6px 14px;border-radius:6px;letter-spacing:.5px;
+              background:rgba(212,175,55,.1)">
+      🏠 Home
+    </a>
+    <a href="/store-admin/dashboard/"
+       style="color:#e8e8e8;text-decoration:none;font-size:12px;font-weight:600;
+              padding:6px 14px;border-radius:6px;letter-spacing:.5px;
+              transition:background .2s"
+       onmouseover="this.style.background='rgba(212,175,55,.1)'"
+       onmouseout="this.style.background='transparent'">
+      📊 Analytics
+    </a>
+    <a href="/shop/"
+       target="_blank"
+       style="color:#e8e8e8;text-decoration:none;font-size:12px;font-weight:600;
+              padding:6px 14px;border-radius:6px;letter-spacing:.5px"
+       onmouseover="this.style.background='rgba(212,175,55,.1)'"
+       onmouseout="this.style.background='transparent'">
+      🛍️ View Store ↗
+    </a>
+    <a href="/accounts/logout/"
+       style="margin-left:auto;color:#e74c3c;text-decoration:none;font-size:12px;font-weight:600;
+              padding:6px 14px;border-radius:6px;letter-spacing:.5px"
+       onmouseover="this.style.background='rgba(231,76,60,.1)'"
+       onmouseout="this.style.background='transparent'">
+      ⏻ Logout
+    </a>
+  </nav>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Global Admin Overrides ──────────────────────── */
+  body, #container { background: #111 !important; color: #e8e8e8 !important; }
+
+  /* Header */
+  #header {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1500 100%) !important;
+    border-bottom: 2px solid rgba(212,175,55,.3) !important;
+    padding: 10px 24px !important;
+  }
+  #user-tools a { color: #d4af37 !important; }
+  #user-tools a:hover { color: #f0d060 !important; }
+
+  /* Sidebar / Content */
+  #content-main a { color: #d4af37 !important; }
+  #content-main a:hover { color: #f0d060 !important; }
+
+  /* Module headers (app titles) */
+  .module > h2, .module caption {
+    background: linear-gradient(90deg,#1a1500,#0d0d0d) !important;
+    color: #d4af37 !important;
+    border: none !important;
+    font-family: 'Josefin Sans', sans-serif !important;
+    letter-spacing: 2px !important;
+    font-size: 13px !important;
+    padding: 10px 16px !important;
+  }
+
+  /* Table rows */
+  #result_list tr:hover > td,
+  #result_list tr:hover > th { background: rgba(212,175,55,.05) !important; }
+  #result_list thead th a { color: #d4af37 !important; }
+
+  /* Action bar */
+  .object-tools a {
+    background: rgba(212,175,55,.15) !important;
+    border: 1px solid rgba(212,175,55,.3) !important;
+    color: #d4af37 !important;
+    border-radius: 6px !important;
+  }
+  .object-tools a:hover {
+    background: rgba(212,175,55,.25) !important;
+    color: #f0d060 !important;
+  }
+
+  /* Buttons */
+  input[type=submit], .button, .submit-row input {
+    background: linear-gradient(135deg,#d4af37,#b8921f) !important;
+    color: #0d0d0d !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    padding: 8px 20px !important;
+  }
+  input[type=submit]:hover { opacity: .9 !important; }
+
+  /* Delete button */
+  .deletelink, .deletelink-box a {
+    background: rgba(231,76,60,.15) !important;
+    color: #e74c3c !important;
+    border: 1px solid rgba(231,76,60,.3) !important;
+  }
+
+  /* Content area */
+  #content { background: #111 !important; }
+  #content-related { background: #1a1a1a !important; border-left: 1px solid rgba(212,175,55,.12) !important; }
+  .module { background: #1a1a1a !important; border: 1px solid rgba(212,175,55,.12) !important; border-radius: 12px !important; overflow: hidden !important; margin-bottom: 20px !important; }
+
+  /* Form inputs */
+  input, select, textarea {
+    background: #222 !important;
+    color: #e8e8e8 !important;
+    border: 1px solid rgba(212,175,55,.2) !important;
+    border-radius: 6px !important;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #d4af37 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(212,175,55,.15) !important;
+  }
+
+  /* Pagination */
+  .paginator a { color: #d4af37 !important; }
+  .paginator .this-page { background: rgba(212,175,55,.2) !important; color: #d4af37 !important; border-radius: 4px; }
+
+  /* Breadcrumb */
+  div.breadcrumbs {
+    background: #0d0d0d !important;
+    border-bottom: 1px solid rgba(212,175,55,.1) !important;
+  }
+  div.breadcrumbs a { color: #d4af37 !important; }
+
+  /* Changelist table */
+  #changelist table thead th { background: #0d0d0d !important; }
+  #changelist table tbody tr { background: #1a1a1a !important; }
+  #changelist table tbody tr:nth-child(2n) { background: #161616 !important; }
+
+  /* Filters */
+  #changelist-filter { background: #1a1a1a !important; border: 1px solid rgba(212,175,55,.12) !important; border-radius: 12px; }
+  #changelist-filter h2 { background: #0d0d0d !important; color: #d4af37 !important; font-family: 'Josefin Sans', sans-serif !important; letter-spacing: 2px; }
+  #changelist-filter h3 { color: #d4af37 !important; }
+  #changelist-filter a { color: #e8e8e8 !important; }
+  #changelist-filter a.selected { color: #d4af37 !important; font-weight: 700; }
+
+  /* Inline tables */
+  .inline-group h2 { background: #0d0d0d !important; color: #d4af37 !important; }
+  .inline-related { background: #1a1a1a !important; border: 1px solid rgba(212,175,55,.1) !important; }
+</style>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Collection - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Shop Collection</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Shop</li>
+        </ul>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0;">
+    <div style="display: flex; flex-direction: row; gap: var(--space-xl); flex-wrap: wrap;">
+        
+        <!-- Sidebar Filters -->
+        <aside style="flex: 1 1 250px; max-width: 300px;">
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); position: sticky; top: 100px;">
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">Filters</h3>
+                
+                <!-- Search bar -->
+                <form action="{% url 'shop:product_list' %}" method="get" style="margin-bottom: var(--space-lg);">
+                    <label for="search-input" class="form-label" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Search Catalog</label>
+                    <div style="display: flex; gap: var(--space-xxs);">
+                        <input type="text" name="q" id="search-input" value="{{ current_q|default:'' }}" placeholder="Search..." class="form-control" style="padding: 8px 12px; font-size: 0.9rem;">
+                        <button type="submit" class="btn btn-primary btn-sm" aria-label="Search"><i data-feather="search" style="width: 16px; height: 16px;"></i></button>
+                    </div>
+                </form>
+
+                <!-- Categories List -->
+                <div style="margin-bottom: var(--space-lg);">
+                    <h4 style="font-size: 0.9rem; margin-bottom: var(--space-sm); color: var(--color-gray-dark);">Category</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-xs); font-size: 0.95rem;">
+                        <li>
+                            <a href="{% url 'shop:product_list' %}" style="color: {% if not selected_category %}var(--color-gold){% else %}inherit{% endif %}; font-weight: {% if not selected_category %}bold{% else %}normal{% endif %};">All Materials</a>
+                        </li>
+                        {% for cat in categories %}
+                            <li>
+                                <a href="?category={{ cat.slug }}" style="color: {% if selected_category.slug == cat.slug %}var(--color-gold){% else %}inherit{% endif %}; font-weight: {% if selected_category.slug == cat.slug %}bold{% else %}normal{% endif %};">
+                                    {{ cat.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Colors Filter -->
+                <div style="margin-bottom: var(--space-lg);">
+                    <h4 style="font-size: 0.9rem; margin-bottom: var(--space-sm); color: var(--color-gray-dark);">Colors</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                        {% for col in available_colors %}
+                            <a href="?color={{ col }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="padding: 4px 10px; border: 1px solid {% if current_color == col %}var(--color-gold){% else %}var(--color-gray-light){% endif %}; font-size: 0.8rem; background-color: {% if current_color == col %}var(--color-gold){% else %}transparent{% endif %}; color: {% if current_color == col %}var(--color-primary){% else %}var(--color-charcoal){% endif %}; border-radius: var(--radius-sm); font-weight: {% if current_color == col %}bold{% else %}normal{% endif %};">
+                                {{ col }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Sizes Filter -->
+                <div style="margin-bottom: var(--space-lg);">
+                    <h4 style="font-size: 0.9rem; margin-bottom: var(--space-sm); color: var(--color-gray-dark);">Sizes</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-xs); font-size: 0.9rem;">
+                        {% for sz in available_sizes %}
+                            <li>
+                                <a href="?size={{ sz }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: {% if current_size == sz %}var(--color-gold){% else %}inherit{% endif %}; font-weight: {% if current_size == sz %}bold{% else %}normal{% endif %};">
+                                    {{ sz }} Size
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Clear Filters -->
+                {% if selected_category or current_color or current_size or current_q %}
+                    <a href="{% url 'shop:product_list' %}" class="btn btn-secondary btn-sm btn-block" style="text-align: center;">Clear All Filters</a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Product Grid Column -->
+        <main style="flex: 3 1 600px;">
+            <!-- Grid Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-sm); flex-wrap: wrap; gap: var(--space-sm);">
+                <p style="color: var(--color-gray-dark); margin: 0; font-size: 0.95rem;">
+                    Showing <strong>{{ products.count }}</strong> products
+                    {% if selected_category %}in <em>{{ selected_category.name }}</em>{% endif %}
+                </p>
+                
+                <!-- Sorting Dropdown -->
+                <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                    <label for="sort-select" style="font-size: 0.9rem; color: var(--color-gray-dark);">Sort by:</label>
+                    <select id="sort-select" onchange="location = this.value;" class="form-control" style="padding: 6px 12px; width: auto; font-size: 0.9rem; background-color: var(--color-secondary);">
+                        <option value="?{% if selected_category %}category={{ selected_category.slug }}{% endif %}{% if current_q %}&q={{ current_q }}{% endif %}" {% if not current_sort %}selected{% endif %}>Default</option>
+                        <option value="?sort=price_asc{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if current_q %}&q={{ current_q }}{% endif %}" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="?sort=price_desc{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if current_q %}&q={{ current_q }}{% endif %}" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="?sort=newest{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if current_q %}&q={{ current_q }}{% endif %}" {% if current_sort == 'newest' %}selected{% endif %}>Newest Arrivals</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid list -->
+            <div class="product-grid">
+                {% for product in products %}
+                    <article class="product-card">
+                        <div class="product-card-image">
+                            <a href="{{ product.get_absolute_url }}">
+                                <img src="{{ product.get_main_image_url }}" alt="{{ product.name }}">
+                            </a>
+                            {% if product.stock == 0 %}
+                                <span class="product-card-badge" style="background-color: var(--color-charcoal); color: var(--color-secondary);">Sold Out</span>
+                            {% elif product.is_featured %}
+                                <span class="product-card-badge">Featured</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-card-content">
+                            <div>
+                                <span class="product-card-category">{{ product.category.name }}</span>
+                                <h3 class="product-card-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                            </div>
+                            <div class="product-card-price-row">
+                                <span class="product-card-price">${{ product.price }}</span>
+                                <a href="{{ product.get_absolute_url }}" class="product-card-action">View Details</a>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div style="grid-column: 1/-1; text-align: center; padding: var(--space-xl) 0;">
+                        <i data-feather="inbox" style="width: 48px; height: 48px; color: var(--color-gray-medium); margin-bottom: var(--space-sm);"></i>
+                        <p style="color: var(--color-gray-dark); font-size: 1.1rem; margin: 0;">No veils match your search parameters. Please try clearing some filters.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </main>
+        
+    </div>
+</div>
+{% endblock %}

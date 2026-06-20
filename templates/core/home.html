@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Amina's Vails | Premium Minimalist Luxury Veils & Scarves{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1601924994987-69e26d50dc26?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat; height: 80vh; min-height: 500px; display: flex; align-items: center; text-align: center; color: var(--color-secondary); position: relative; margin-bottom: var(--space-xxl);">
+    <div class="container" style="max-width: 800px; z-index: 2;">
+        <p style="font-family: var(--font-heading); color: var(--color-gold); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: var(--space-sm); transform: translateY(20px); opacity: 0; animation: fadeInUp 0.8s forwards 0.2s;">EXCLUSIVE COLLECTION</p>
+        <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); font-family: var(--font-heading); color: var(--color-secondary); letter-spacing: 3px; line-height: 1.1; margin-bottom: var(--space-md); transform: translateY(20px); opacity: 0; animation: fadeInUp 0.8s forwards 0.4s;">Elegance in Every Thread</h1>
+        <p style="font-size: 1.1rem; color: var(--color-gray-light); max-width: 600px; margin: 0 auto var(--space-xl) auto; font-weight: 300; transform: translateY(20px); opacity: 0; animation: fadeInUp 0.8s forwards 0.6s;">
+            Discover our curated, high-end collection of Mulberry silk, crinkled georgette, and long-staple Egyptian cotton scarves.
+        </p>
+        <div style="transform: translateY(20px); opacity: 0; animation: fadeInUp 0.8s forwards 0.8s;">
+            <a href="{% url 'shop:product_list' %}" class="btn btn-gold">Shop The Collection</a>
+        </div>
+    </div>
+    <!-- Subtle gradient wash at bottom -->
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, var(--color-secondary));"></div>
+</section>
+
+<!-- Brand Values Bar -->
+<section class="values-bar" style="padding: var(--space-lg) 0; border-bottom: 1px solid var(--color-gray-light); margin-bottom: var(--space-xxl);">
+    <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-lg); text-align: center;">
+        <div>
+            <h3 style="font-size: 1rem; color: var(--color-primary); letter-spacing: 1px; margin-bottom: 5px;">Pure Materials</h3>
+            <p style="font-size: 0.9rem; color: var(--color-gray-dark); margin: 0;">100% mulberry silk, long-staple Egyptian cotton, and custom weaves.</p>
+        </div>
+        <div>
+            <h3 style="font-size: 1rem; color: var(--color-primary); letter-spacing: 1px; margin-bottom: 5px;">Artisanal Finish</h3>
+            <p style="font-size: 0.9rem; color: var(--color-gray-dark); margin: 0;">Couture craftsmanship featuring hand-rolled hems and fine details.</p>
+        </div>
+        <div>
+            <h3 style="font-size: 1rem; color: var(--color-primary); letter-spacing: 1px; margin-bottom: 5px;">WhatsApp Payment</h3>
+            <p style="font-size: 0.9rem; color: var(--color-gray-dark); margin: 0;">Confirm order details and complete payments directly on WhatsApp.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Shop by Material (Categories) -->
+<section class="categories-section" style="margin-bottom: var(--space-xxl);">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: var(--space-xl);">
+            <h2 style="font-size: 2rem; position: relative; display: inline-block; padding-bottom: var(--space-xs);">
+                Shop By Material
+                <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background-color: var(--color-gold);"></span>
+            </h2>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+            <!-- Silk Category -->
+            <a href="{% url 'shop:product_list' %}?category=pure-silk" class="category-card" style="position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); group;">
+                <div class="category-image-wrap" style="width: 100%; height: 100%; transition: transform 0.6s ease;">
+                    <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=2070&auto=format&fit=crop" alt="Pure Silk Collection" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); display: flex; flex-direction: column; justify-content: flex-end; padding: var(--space-md); color: var(--color-secondary);">
+                    <h3 style="color: var(--color-secondary); font-size: 1.3rem; margin-bottom: 5px;">Pure Silk</h3>
+                    <p style="font-size: 0.85rem; color: var(--color-gray-light); margin: 0;">Luminous and fluid drape.</p>
+                </div>
+            </a>
+
+            <!-- Chiffon Category -->
+            <a href="{% url 'shop:product_list' %}?category=chiffon-shawls" class="category-card" style="position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); group;">
+                <div class="category-image-wrap" style="width: 100%; height: 100%; transition: transform 0.6s ease;">
+                    <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1974&auto=format&fit=crop" alt="Chiffon Shawls Collection" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); display: flex; flex-direction: column; justify-content: flex-end; padding: var(--space-md); color: var(--color-secondary);">
+                    <h3 style="color: var(--color-secondary); font-size: 1.3rem; margin-bottom: 5px;">Chiffon Shawls</h3>
+                    <p style="font-size: 0.85rem; color: var(--color-gray-light); margin: 0;">Lightweight, sheer layers.</p>
+                </div>
+            </a>
+
+            <!-- Cotton Category -->
+            <a href="{% url 'shop:product_list' %}?category=premium-cotton" class="category-card" style="position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); group;">
+                <div class="category-image-wrap" style="width: 100%; height: 100%; transition: transform 0.6s ease;">
+                    <img src="https://images.unsplash.com/photo-1606744824163-985d376605aa?q=80&w=1932&auto=format&fit=crop" alt="Premium Cotton Collection" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); display: flex; flex-direction: column; justify-content: flex-end; padding: var(--space-md); color: var(--color-secondary);">
+                    <h3 style="color: var(--color-secondary); font-size: 1.3rem; margin-bottom: 5px;">Premium Cotton</h3>
+                    <p style="font-size: 0.85rem; color: var(--color-gray-light); margin: 0;">Timeless everyday comfort.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Grid -->
+<section class="featured-products-section" style="margin-bottom: var(--space-xxl);">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-xl); border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs);">
+            <h2 style="font-size: 2rem; margin: 0;">Featured Arrivals</h2>
+            <a href="{% url 'shop:product_list' %}" style="font-family: var(--font-heading); color: var(--color-gold); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">View All</a>
+        </div>
+        
+        <div class="product-grid">
+            {% for product in featured_products %}
+                <article class="product-card">
+                    <div class="product-card-image">
+                        <a href="{{ product.get_absolute_url }}">
+                            <img src="{{ product.get_main_image_url }}" alt="{{ product.name }}">
+                        </a>
+                        {% if product.stock == 0 %}
+                            <span class="product-card-badge" style="background-color: var(--color-charcoal); color: var(--color-secondary);">Sold Out</span>
+                        {% elif product.is_featured %}
+                            <span class="product-card-badge">Featured</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-card-content">
+                        <div>
+                            <span class="product-card-category">{{ product.category.name }}</span>
+                            <h3 class="product-card-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                        </div>
+                        <div class="product-card-price-row">
+                            <span class="product-card-price">${{ product.price }}</span>
+                            <a href="{{ product.get_absolute_url }}" class="product-card-action">View Details</a>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p style="grid-column: 1/-1; text-align: center; color: var(--color-gray-medium);">No featured products available at the moment. Explore our shop!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Brand Editorial Showcase -->
+<section class="brand-editorial" style="background-color: var(--color-primary); color: var(--color-secondary); padding: var(--space-xxl) 0; position: relative;">
+    <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-xl); align-items: center;">
+        <div style="max-width: 500px;">
+            <p style="font-family: var(--font-heading); color: var(--color-gold); letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem; margin-bottom: var(--space-xs);">OUR PHILOSOPHY</p>
+            <h2 style="color: var(--color-secondary); font-size: clamp(2rem, 3.5vw, 2.5rem); margin-bottom: var(--space-md); font-weight: normal; text-transform: uppercase; letter-spacing: 2px;">Couture Craftsmanship & Luxury Drape</h2>
+            <p style="color: var(--color-gray-medium); font-size: 1rem; margin-bottom: var(--space-md); font-weight: 300;">
+                Amina’s Vails blends high-fashion curation with clean minimalism. Every veil is selected for its structural behavior, tactile excellence, and drape longevity. We believe in slow fashion—creating premium, elegant essentials that transcend trends and define personal grace.
+            </p>
+            <a href="{% url 'about' %}" class="btn btn-gold btn-sm" style="margin-top: var(--space-sm);">Our Story</a>
+        </div>
+        <div style="position: relative; aspect-ratio: 4/3; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3);">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" alt="Luxury Veil Crafting" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+</section>
+
+<!-- CSS Animations -->
+<style>
+    @keyframes fadeInUp {
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .category-card:hover .category-image-wrap {
+        transform: scale(1.06);
+    }
+</style>
+{% endblock %}

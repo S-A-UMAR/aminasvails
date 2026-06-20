@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm);">
+        <div>
+            <h1 class="page-hero-title">My Account</h1>
+            <ul class="breadcrumbs">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li>Dashboard</li>
+            </ul>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="btn btn-secondary btn-sm" style="border-color: var(--color-error); color: var(--color-error);"><i data-feather="log-out" style="width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;"></i> Log Out</a>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0;">
+    <div style="display: flex; gap: var(--space-xl); flex-wrap: wrap;">
+        
+        <!-- Profile Panel -->
+        <div style="flex: 1 1 250px; max-width: 350px;">
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light);">
+                <div style="text-align: center; margin-bottom: var(--space-md);">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--color-gold); color: var(--color-primary); font-size: 2rem; font-family: var(--font-heading); display: inline-flex; align-items: center; justify-content: center; margin-bottom: var(--space-sm);">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <h3 style="font-size: 1.1rem; margin: 0; text-transform: uppercase;">{{ user.username }}</h3>
+                    <span style="font-size: 0.85rem; color: var(--color-gray-medium);">{{ user.email }}</span>
+                </div>
+                
+                <div style="border-top: 1px solid var(--color-gray-light); padding-top: var(--space-sm); font-size: 0.9rem; color: var(--color-gray-dark);">
+                    <p style="margin-bottom: var(--space-xs);"><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                    <p style="margin: 0;"><strong>Active Orders:</strong> {{ orders.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Panel -->
+        <div style="flex: 3 1 500px;">
+            <h2 style="font-size: 1.4rem; margin-bottom: var(--space-md); letter-spacing: 0.5px; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-xs);">Order History</h2>
+            
+            {% if orders %}
+                <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                    {% for order in orders %}
+                        <div class="glass-panel" style="padding: var(--space-md); border: 1px solid var(--color-gray-light); border-radius: var(--radius-sm);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-sm); margin-bottom: var(--space-sm); flex-wrap: wrap; gap: var(--space-sm);">
+                                <div>
+                                    <strong style="font-size: 1rem; color: var(--color-primary);">Order #{{ order.id }}</strong>
+                                    <span style="font-size: 0.8rem; color: var(--color-gray-medium); display: block;">Placed on {{ order.created_at|date:"F d, Y" }}</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span style="font-family: var(--font-heading); font-weight: bold; color: var(--color-gold); font-size: 1.1rem; display: block;">${{ order.total_amount }}</span>
+                                    <span class="product-card-badge" style="position: static; display: inline-block; font-size: 0.7rem; padding: 2px 6px; background-color: {% if order.status == 'Completed' or order.status == 'Processing' %}var(--color-success){% else %}var(--color-gold){% endif %}; color: var(--color-secondary);">
+                                        {{ order.status }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Items List inside order card -->
+                            <div style="margin-bottom: var(--space-sm);">
+                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px;">
+                                    {% for item in order.items.all %}
+                                        <li style="font-size: 0.9rem; color: var(--color-gray-dark); display: flex; justify-content: space-between;">
+                                            <span style="text-transform: capitalize;">{{ item.product.name }} &times; {{ item.quantity }} <small style="color: var(--color-gray-medium);">({{ item.color }} / {{ item.size }})</small></span>
+                                            <span>${{ item.get_cost }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(0,0,0,0.05); padding-top: var(--space-xs);">
+                                <a href="{% url 'shop:order_confirmation' order.id %}" style="font-size: 0.85rem; color: var(--color-gold); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                                    View Receipt
+                                    <i data-feather="chevron-right" style="width: 14px; height: 14px;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: var(--space-xl) 0; border: 1px dashed var(--color-gray-light); border-radius: var(--radius-sm);">
+                    <i data-feather="package" style="width: 48px; height: 48px; color: var(--color-gray-light); margin-bottom: var(--space-sm);"></i>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--space-md);">You have not placed any orders yet.</p>
+                    <a href="{% url 'shop:product_list' %}" class="btn btn-primary btn-sm">Shop Our Collection</a>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

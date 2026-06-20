@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Terms & Conditions - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Terms & Conditions</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Terms</li>
+        </ul>
+    </div>
+</section>
+
+<section style="padding: var(--space-xl) 0;">
+    <div class="container" style="max-width: 800px; color: var(--color-gray-dark); line-height: 1.8;">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: var(--space-md); letter-spacing: 1px;">TERMS OF SERVICE</h2>
+        <p style="margin-bottom: var(--space-sm);">
+            By visiting our website and placing orders, you agree to comply with and be bound by the following terms and conditions. If you do not agree to these terms, please do not use our services.
+        </p>
+        <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-xs); letter-spacing: 0.5px;">Order Placement & Cancellation</h3>
+        <p style="margin-bottom: var(--space-sm);">
+            We reserve the right to refuse or cancel any order. In the event that we make a change to or cancel an order, we will attempt to notify you by contacting the e-mail and/or phone number provided at the time the order was made.
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <ul class="breadcrumbs" style="margin-bottom: 0;">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop:product_list' %}">Shop</a></li>
+            <li>{{ product.name }}</li>
+        </ul>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0;">
+    <div style="display: flex; gap: var(--space-xl); flex-wrap: wrap; margin-bottom: var(--space-xxl);">
+        
+        <!-- Left: Image Gallery / Carousel -->
+        <div style="flex: 1 1 450px; max-width: 550px;">
+            <div style="border: 1px solid var(--color-gray-light); border-radius: var(--radius-sm); overflow: hidden; background-color: var(--color-offwhite); aspect-ratio: 3/4; position: relative;">
+                <img id="main-product-image" src="{{ product.get_main_image_url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
+            </div>
+            
+            <!-- Thumbnails -->
+            <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-sm);">
+                <button onclick="switchImage('{{ product.get_main_image_url }}')" style="width: 80px; height: 100px; padding: 0; border: 2px solid var(--color-gold); cursor: pointer; border-radius: var(--radius-sm); overflow: hidden; background: none;">
+                    <img src="{{ product.get_main_image_url }}" alt="Thumbnail 1" style="width: 100%; height: 100%; object-fit: cover;">
+                </button>
+                <button onclick="switchImage('{{ product.get_secondary_image_url }}')" style="width: 80px; height: 100px; padding: 0; border: 1px solid var(--color-gray-light); cursor: pointer; border-radius: var(--radius-sm); overflow: hidden; background: none;">
+                    <img src="{{ product.get_secondary_image_url }}" alt="Thumbnail 2" style="width: 100%; height: 100%; object-fit: cover;">
+                </button>
+            </div>
+        </div>
+
+        <!-- Right: Details, Variations & Actions -->
+        <div style="flex: 1 1 450px;">
+            <span style="font-family: var(--font-heading); color: var(--color-gold); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;">{{ product.category.name }}</span>
+            <h1 style="font-size: 2.2rem; margin-top: 5px; margin-bottom: var(--space-xs); font-family: var(--font-heading); text-transform: capitalize; letter-spacing: 1px;">{{ product.name }}</h1>
+            
+            <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                <!-- Stars -->
+                <div style="color: var(--color-gold); font-size: 0.95rem; display: flex; gap: 2px;">
+                    <i data-feather="star" style="width: 16px; height: 16px; fill: var(--color-gold);"></i>
+                    <i data-feather="star" style="width: 16px; height: 16px; fill: var(--color-gold);"></i>
+                    <i data-feather="star" style="width: 16px; height: 16px; fill: var(--color-gold);"></i>
+                    <i data-feather="star" style="width: 16px; height: 16px; fill: var(--color-gold);"></i>
+                    <i data-feather="star" style="width: 16px; height: 16px; fill: var(--color-gold);"></i>
+                </div>
+                <span style="font-size: 0.85rem; color: var(--color-gray-dark);">({{ product.reviews.count }} Customer Reviews)</span>
+            </div>
+
+            <div style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: bold; color: var(--color-primary); margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-sm);">
+                ${{ product.price }}
+            </div>
+
+            <p style="color: var(--color-gray-dark); margin-bottom: var(--space-lg); line-height: 1.7; font-weight: 300;">
+                {{ product.description }}
+            </p>
+
+            <!-- Add to Cart Form -->
+            <form action="{% url 'shop:cart_add' product.id %}" method="post" style="margin-bottom: var(--space-xl);">
+                {% csrf_token %}
+                
+                <!-- Color variations -->
+                <div class="form-group">
+                    <label for="color-select" class="form-label">Select Color</label>
+                    <select name="color" id="color-select" class="form-control" style="background-color: var(--color-secondary); max-width: 300px;">
+                        {% for color in product.get_colors_list %}
+                            <option value="{{ color }}">{{ color }}</option>
+                        {% endfor %};
+                    </select>
+                </div>
+
+                <!-- Size variations -->
+                <div class="form-group">
+                    <label for="size-select" class="form-label">Select Size</label>
+                    <select name="size" id="size-select" class="form-control" style="background-color: var(--color-secondary); max-width: 300px;">
+                        {% for size in product.get_sizes_list %}
+                            <option value="{{ size }}">{{ size }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Quantity & ATC / WhatsApp -->
+                <div style="display: flex; gap: var(--space-sm); align-items: flex-end; margin-top: var(--space-md); flex-wrap: wrap;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="qty-input" class="form-label">Qty</label>
+                        <input type="number" name="quantity" id="qty-input" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width: 80px; text-align: center;">
+                    </div>
+                    
+                    {% if product.stock > 0 %}
+                        <button type="submit" class="btn btn-primary" style="flex: 1 1 auto; white-space: nowrap;">Add To Cart</button>
+                    {% else %}
+                        <button type="button" class="btn btn-primary" disabled style="flex: 1 1 auto; cursor: not-allowed; background-color: var(--color-gray-medium); border-color: var(--color-gray-medium);">Out of Stock</button>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Specs Tabs details -->
+            <div style="border: 1px solid var(--color-gray-light); border-radius: var(--radius-sm); overflow: hidden;">
+                <div style="display: flex; border-bottom: 1px solid var(--color-gray-light); background-color: var(--color-offwhite);">
+                    <button class="tab-btn active" onclick="openTab(event, 'tab-specs')" style="flex: 1; padding: 12px; font-family: var(--font-heading); font-size: 0.85rem; font-weight: bold; border: none; background: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Details</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab-shipping')" style="flex: 1; padding: 12px; font-family: var(--font-heading); font-size: 0.85rem; font-weight: bold; border: none; border-left: 1px solid var(--color-gray-light); background: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Shipping</button>
+                </div>
+                <div id="tab-specs" class="tab-content" style="padding: var(--space-md); font-size: 0.9rem; color: var(--color-gray-dark);">
+                    <p style="margin-bottom: var(--space-xs);"><strong>SKU:</strong> {{ product.sku }}</p>
+                    <p style="margin-bottom: var(--space-xs);"><strong>Availability:</strong> {% if product.stock > 0 %}{{ product.stock }} Items in Stock{% else %}Sold Out{% endif %}</p>
+                    <p style="margin: 0;"><strong>Care Instructions:</strong> Dry clean or professional temperature-controlled handwash only.</p>
+                </div>
+                <div id="tab-shipping" class="tab-content" style="padding: var(--space-md); font-size: 0.9rem; color: var(--color-gray-dark); display: none;">
+                    <p style="margin: 0;">Standard domestic shipping (3-5 business days). DHL Express International shipping (3-7 business days). Orders are processed in elegant branded gift packaging.</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section" style="margin-bottom: var(--space-xxl); border-top: 1px solid var(--color-gray-light); padding-top: var(--space-xxl);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-xl);">
+            
+            <!-- Left: Reviews List -->
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: var(--space-lg); letter-spacing: 1px;">Customer Feedback ({{ product.reviews.count }})</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    {% for review in product.reviews.all %}
+                        <div style="border-bottom: 1px solid var(--color-gray-light); padding-bottom: var(--space-md);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <strong style="font-size: 0.95rem;">{{ review.name }}</strong>
+                                <span style="font-size: 0.8rem; color: var(--color-gray-medium);">{{ review.created_at|date:"F d, Y" }}</span>
+                            </div>
+                            <div style="color: var(--color-gold); font-size: 0.8rem; margin-bottom: 8px; display: flex; gap: 2px;">
+                                {% for i in "12345" %}
+                                    <i data-feather="star" style="width: 12px; height: 12px; {% if forloop.counter <= review.rating %}fill: var(--color-gold);{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--color-gray-dark); margin: 0; line-height: 1.5;">{{ review.comment }}</p>
+                        </div>
+                    {% empty %}
+                        <p style="color: var(--color-gray-medium); font-style: italic;">No reviews published for this product yet. Be the first to write one!</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Right: Submit Review Form -->
+            <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light); height: fit-content;">
+                <h4 style="font-size: 1.1rem; margin-bottom: var(--space-md); letter-spacing: 0.5px;">Write a Review</h4>
+                <form action="{% url 'shop:product_detail' product.id product.slug %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="review-name" class="form-label">Your Name</label>
+                        <input type="text" name="name" id="review-name" value="{% if user.is_authenticated %}{{ user.username }}{% else %}Anonymous{% endif %}" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="review-rating" class="form-label">Rating</label>
+                        <select name="rating" id="review-rating" class="form-control" style="background-color: var(--color-secondary);">
+                            <option value="5">5 Stars (Excellent)</option>
+                            <option value="4">4 Stars (Good)</option>
+                            <option value="3">3 Stars (Average)</option>
+                            <option value="2">2 Stars (Poor)</option>
+                            <option value="1">1 Star (Very Bad)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="review-comment" class="form-label">Review Comment</label>
+                        <textarea name="comment" id="review-comment" rows="4" required class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary btn-block">Publish Review</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="related-products" style="border-top: 1px solid var(--color-gray-light); padding-top: var(--space-xxl);">
+        <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: var(--space-xl); letter-spacing: 1px;">Related Collections</h3>
+        <div class="product-grid">
+            {% for rel_product in related_products %}
+                <article class="product-card">
+                    <div class="product-card-image">
+                        <a href="{{ rel_product.get_absolute_url }}">
+                            <img src="{{ rel_product.get_main_image_url }}" alt="{{ rel_product.name }}">
+                        </a>
+                        {% if rel_product.stock == 0 %}
+                            <span class="product-card-badge" style="background-color: var(--color-charcoal); color: var(--color-secondary);">Sold Out</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-card-content">
+                        <div>
+                            <span class="product-card-category">{{ rel_product.category.name }}</span>
+                            <h3 class="product-card-title"><a href="{{ rel_product.get_absolute_url }}">{{ rel_product.name }}</a></h3>
+                        </div>
+                        <div class="product-card-price-row">
+                            <span class="product-card-price">${{ rel_product.price }}</span>
+                            <a href="{{ rel_product.get_absolute_url }}" class="product-card-action">View Details</a>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p style="grid-column: 1/-1; text-align: center; color: var(--color-gray-medium);">No related items found.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<style>
+    .tab-btn {
+        transition: all var(--transition-speed);
+        color: var(--color-gray-medium);
+    }
+    .tab-btn.active {
+        color: var(--color-primary);
+        background-color: var(--color-secondary);
+    }
+    .tab-btn:hover:not(.active) {
+        color: var(--color-gold);
+    }
+</style>
+
+<script>
+    // Gallery Switcher
+    function switchImage(imgUrl) {
+        const mainImg = document.getElementById('main-product-image');
+        mainImg.style.opacity = '0';
+        setTimeout(() => {
+            mainImg.src = imgUrl;
+            mainImg.style.opacity = '1';
+        }, 150);
+        
+        // Highlight active thumbnail
+        const btns = event.currentTarget.parentElement.getElementsByTagName('button');
+        for (let btn of btns) {
+            btn.style.borderColor = 'var(--color-gray-light)';
+        }
+        event.currentTarget.style.borderColor = 'var(--color-gold)';
+    }
+
+    // Specifications Tabs Switcher
+    function openTab(evt, tabId) {
+        // Hide all contents
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(c => c.style.display = 'none');
+        
+        // Remove active class from buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        
+        // Show current tab & set active button
+        document.getElementById(tabId).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+</script>
+{% endblock %}

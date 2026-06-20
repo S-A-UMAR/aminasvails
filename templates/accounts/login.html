@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Account Login</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Login</li>
+        </ul>
+    </div>
+</section>
+
+<div class="container" style="padding: var(--space-md) 0; max-width: 450px;">
+    <div class="glass-panel" style="padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-gray-light);">
+        <h2 style="font-size: 1.3rem; margin-bottom: var(--space-md); letter-spacing: 1px; text-align: center;">LOG IN TO YOUR ACCOUNT</h2>
+        
+        <form action="{% url 'accounts:login' %}" method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <input type="{% if 'password' in field.name %}password{% else %}text{% endif %}" name="{{ field.name }}" id="{{ field.id_for_label }}" required class="form-control" placeholder="Enter your {{ field.label|lower }}">
+                    {% if field.errors %}
+                        <div style="color: var(--color-error); font-size: 0.8rem; margin-top: var(--space-xxs);">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-sm);">Log In</button>
+        </form>
+        
+        <div style="margin-top: var(--space-md); text-align: center; font-size: 0.9rem; color: var(--color-gray-dark);">
+            <p>New to Amina's Vails? <a href="{% url 'accounts:register' %}" style="color: var(--color-gold); font-weight: bold;">Create an account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

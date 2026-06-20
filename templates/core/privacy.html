@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - Amina's Vails{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero-title">Privacy Policy</h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li>Privacy</li>
+        </ul>
+    </div>
+</section>
+
+<section style="padding: var(--space-xl) 0;">
+    <div class="container" style="max-width: 800px; color: var(--color-gray-dark); line-height: 1.8;">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: var(--space-md); letter-spacing: 1px;">PRIVACY DISCLOSURES</h2>
+        <p style="margin-bottom: var(--space-sm);">
+            At Amina’s Vails, we value your trust. This Privacy Policy details how we collect, store, and utilize your personal information (name, email, shipping address, phone number) when you browse our boutique, buy products, or interact with our WhatsApp commerce API.
+        </p>
+        <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-xs); letter-spacing: 0.5px;">Information We Share With WhatsApp</h3>
+        <p style="margin-bottom: var(--space-sm);">
+            When selecting WhatsApp checkout, we transmit only order items, billing totals, and shipping details to form the pre-filled redirect message. No credit card information is processed by our servers or sent over WhatsApp. All conversational threads are subject to WhatsApp's standard end-to-end encryption settings.
+        </p>
+    </div>
+</section>
+{% endblock %}

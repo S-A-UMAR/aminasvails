@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Amina's Vails | Luxury Scarves & Veils{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Amina’s Vails is a minimalist, luxury e-commerce platform offering premium scarves and veils with elegant craftsmanship.{% endblock %}">
+    
+    <!-- Google Fonts: Josefin Sans & Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Sticky Header -->
+    <header class="site-header" role="banner">
+        <div class="container header-container">
+            <!-- Mobile Menu Toggle Button -->
+            <button class="menu-toggle" aria-label="Toggle Navigation Menu" aria-controls="primary-nav" aria-expanded="false" id="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Brand Logo -->
+            <a href="{% url 'home' %}" class="logo-link">Amina's Vails</a>
+
+            <!-- Navigation Links -->
+            <nav id="primary-nav" aria-label="Primary Navigation" class="site-nav" role="navigation">
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'shop:product_list' %}" class="nav-link {% if 'shop' in request.path %}active{% endif %}">Shop</a></li>
+                    <li><a href="{% url 'blog:post_list' %}" class="nav-link {% if 'blog' in request.path %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a></li>
+                    <li><a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
+                    <li><a href="{% url 'faq' %}" class="nav-link {% if request.resolver_match.url_name == 'faq' %}active{% endif %}">FAQ</a></li>
+                </ul>
+            </nav>
+
+            <!-- Utility Icons -->
+            <div class="header-utilities">
+                <!-- User Account -->
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}" class="utility-button" title="My Account" aria-label="Go to Dashboard">
+                        <i data-feather="user"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="utility-button" title="Log In" aria-label="Log in to account">
+                        <i data-feather="log-in"></i>
+                    </a>
+                {% endif %}
+
+                <!-- Shopping Cart -->
+                <a href="{% url 'shop:cart_detail' %}" class="utility-button" title="Shopping Cart" aria-label="View Shopping Cart">
+                    <i data-feather="shopping-bag"></i>
+                    <span class="cart-badge" id="cart-count">{{ cart.get_total_items }}</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="site-main" role="main">
+        <!-- Messages/Alerts Container -->
+        {% if messages %}
+            <div class="container messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" role="alert">
+                        <span>{{ message }}</span>
+                        <button class="alert-close" aria-label="Close Alert" onclick="this.parentElement.remove();">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- About Widget -->
+                <div class="footer-widget">
+                    <h3>Amina's Vails</h3>
+                    <p>Exclusive minimalist luxury veils and scarves, crafted for elegance in every thread. Crafted for refinement and premium expression.</p>
+                    <div class="footer-socials">
+                        <a href="https://instagram.com" class="social-icon" aria-label="Instagram" target="_blank" rel="noopener"><i data-feather="instagram"></i></a>
+                        <a href="https://pinterest.com" class="social-icon" aria-label="Pinterest" target="_blank" rel="noopener"><i data-feather="bookmark"></i></a>
+                        <a href="https://facebook.com" class="social-icon" aria-label="Facebook" target="_blank" rel="noopener"><i data-feather="facebook"></i></a>
+                    </div>
+                </div>
+
+                <!-- Shopping Links -->
+                <div class="footer-widget">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'shop:product_list' %}">All Collection</a></li>
+                        <li><a href="{% url 'shop:product_list' %}?category=silk">Pure Silk</a></li>
+                        <li><a href="{% url 'shop:product_list' %}?category=chiffon">Chiffon Shawls</a></li>
+                        <li><a href="{% url 'shop:product_list' %}?category=cotton">Premium Cotton</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Service -->
+                <div class="footer-widget">
+                    <h3>Customer Care</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'faq' %}">FAQs</a></li>
+                        <li><a href="{% url 'returns' %}">Returns & Refunds</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                        <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms' %}">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Widget -->
+                <div class="footer-widget">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to receive news, styling guides, and exclusive collection releases.</p>
+                    <form action="{% url 'newsletter_signup' %}" method="post" style="display: flex; gap: var(--space-xs); margin-top: var(--space-sm);">
+                        {% csrf_token %}
+                        <input type="email" name="email" required placeholder="Your email address" aria-label="Email address for newsletter" class="form-control" style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--color-secondary);">
+                        <button type="submit" class="btn btn-gold btn-sm" aria-label="Subscribe to newsletter">Join</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; {% now "Y" %} Amina's Vails. All Rights Reserved.</p>
+                <p>Designed with elegance. Integrated with WhatsApp checkout.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Feather Icons CDN & script init -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        // Init feather icons
+        feather.replace();
+
+        // Responsive Hamburger Navigation
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        menuToggle.addEventListener('click', () => {
+            const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !expanded);
+            navMenu.classList.toggle('open');
+            menuToggle.classList.toggle('active');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found - Amina's Vails{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: var(--space-xxl) var(--space-md); text-align: center; max-width: 600px;">
+    <h1 style="font-size: 5rem; color: var(--color-gold); margin-bottom: var(--space-xs); line-height: 1;">404</h1>
+    <h2 style="font-size: 1.5rem; margin-bottom: var(--space-md); letter-spacing: 2px;">Elegance Lost</h2>
+    <p style="color: var(--color-gray-dark); margin-bottom: var(--space-lg);">
+        The page you are looking for does not exist or has been moved to another location. Allow us to guide you back to our collections.
+    </p>
+    <div style="display: flex; justify-content: center; gap: var(--space-sm);">
+        <a href="{% url 'home' %}" class="btn btn-primary">Return Home</a>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Browse Shop</a>
+    </div>
+</div>
+{% endblock %}
